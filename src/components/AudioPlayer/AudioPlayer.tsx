@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 import styles from "./AudioPlayer.module.css";
-import { cn } from "@/lib/utils";
+import { cn, BASE_PATH } from "@/lib/utils";
 
 interface AudioPlayerProps {
   isPlaying: boolean;
@@ -16,7 +16,7 @@ export function AudioPlayer({ isPlaying, onToggle }: AudioPlayerProps) {
   useEffect(() => {
     // Initialize audio
     // Added timestamp to prevent caching issues when file is updated
-    audioRef.current = new Audio("/audio/background-music.mp3?v=" + new Date().getTime()); 
+    audioRef.current = new Audio(`${BASE_PATH}/audio/background-music.mp3?v=` + new Date().getTime()); 
     audioRef.current.loop = true;
     
     // Cleanup

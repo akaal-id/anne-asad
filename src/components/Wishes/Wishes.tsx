@@ -4,8 +4,8 @@ import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import styles from "./Wishes.module.css";
 import { BASE_PATH } from "@/lib/utils";
+import styles from "./Wishes.module.css";
 
 interface Wish {
   id: number;

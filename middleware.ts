@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
     const token = request.cookies.get('admin_token');
     
     if (!token) {
-      return NextResponse.redirect(new URL('/wa/anne-asad/admin/login', request.url));
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 
@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   if (path === '/admin/login') {
     const token = request.cookies.get('admin_token');
     if (token) {
-      return NextResponse.redirect(new URL('/wa/anne-asad/admin', request.url));
+      return NextResponse.redirect(new URL('/admin', request.url));
     }
   }
 

@@ -138,7 +138,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
   const [origin, setOrigin] = useState('');
 
   useEffect(() => {
-    setOrigin(window.location.origin);
+    setOrigin(window.location.origin + BASE_PATH);
   }, []);
 
 
@@ -244,7 +244,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                     .filter(inv => inv.guestName.toLowerCase().includes(searchQuery.toLowerCase()))
                     .map((inv) => {
                       const isEditing = editingId === inv.id;
-                      const linkUrl = origin ? `${origin}/wa/anne-asad/?u=${inv.slug || inv.guestName}` : `/?u=${inv.slug || inv.guestName}`;
+                      const linkUrl = origin ? `${origin}/?u=${inv.slug || inv.guestName}` : `/?u=${inv.slug || inv.guestName}`;
 
                       return (
                         <tr key={inv.id} className="hover:bg-gray-50">
