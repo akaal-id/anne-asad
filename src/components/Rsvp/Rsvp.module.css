@@ -1,0 +1,221 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* space-y-12 */
+}
+
+.header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* space-y-4 */
+  align-items: center;
+}
+
+.title {
+  font-family: var(--font-lora);
+  font-size: clamp(2rem, 2vw, 2.5rem); /* 3xl - 4xl */
+  color: var(--color-navy-primary);
+  font-weight: 400;
+}
+
+.divider {
+  width: 4rem;
+  height: 1px;
+  background-color: var(--color-gold-accent);
+}
+
+.description {
+  font-family: var(--font-mulish);
+  font-size: 0.875rem; /* text-sm */
+  color: rgba(0, 7, 27, 0.7); /* navy-deep/70 */
+  max-width: 32rem; /* max-w-lg */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.formWrapper {
+  /* Set a fixed max-width that accommodates the widest state */
+  max-width: 28rem; 
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--color-white);
+  padding: 2rem;
+  border-radius: 1rem; /* rounded-sm */
+  border: 1px solid var(--color-gold-accent); /* gold-accent/10 */
+  /* Smoothly animate height changes if content expands */
+  transition: all 300ms ease-in-out;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* space-y-8 */
+}
+
+.label {
+  display: block;
+  font-size: 0.75rem; /* text-xs */
+  font-family: var(--font-mulish);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em; /* tracking-wider */
+  color: rgba(0, 7, 27, 0.5); /* navy-deep/50 */
+  margin-bottom: 0.5rem; /* mb-2 */
+}
+
+.input {
+  width: 100%;
+  border-bottom: 1px solid #d1d5db; /* gray-300 */
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  font-family: var(--font-mulish);
+  font-size: 1rem; /* text-base */
+  background-color: transparent;
+  transition: color 150ms;
+  /* Fix popup positioning issues by ensuring default browser behavior */
+  appearance: none; 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 1em;
+}
+
+/* Specific rule for select elements to override background image if needed or add padding */
+select.input {
+  padding-right: 1.5rem; /* space for arrow */
+}
+
+.input option {
+  color: var(--color-navy-deep);
+  padding: 0.5rem;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-navy-primary);
+}
+
+.input::placeholder {
+  color: #d1d5db; /* gray-300 */
+}
+
+.confirmationGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.optionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  border-radius: 0.125rem; /* rounded-sm */
+  border: 1px solid #e5e7eb; /* gray-200 */
+  transition: all 300ms;
+  cursor: pointer;
+}
+
+.optionButtonInactive {
+  color: var(--color-navy-deep);
+}
+
+.optionButtonInactive:hover {
+  background-color: #f9fafb; /* gray-50 */
+}
+
+.optionButtonActiveHadir {
+  background-color: var(--color-navy-primary);
+  color: var(--color-white);
+  border-color: var(--color-navy-primary);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.optionButtonActiveTidak {
+  background-color: var(--color-navy-deep);
+  color: var(--color-white);
+  border-color: var(--color-navy-deep);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.optionText {
+  font-size: 0.875rem; /* text-sm */
+  font-family: var(--font-mulish);
+  font-weight: 500;
+}
+
+.guestNote {
+  font-size: 0.625rem; /* text-[10px] */
+  color: #9ca3af; /* gray-400 */
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.errorMessage {
+  color: #ef4444; /* red-500 */
+  font-size: 0.75rem; /* text-xs */
+  background-color: #fef2f2; /* red-50 */
+  padding: 0.5rem;
+  border-radius: 0.125rem; /* rounded-sm */
+}
+
+.submitButton {
+  width: 100%;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(28, 49, 99, 0.2);
+}
+
+/* Success State Styles */
+.successWrapper {
+  text-align: center;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.successCard {
+  background-color: var(--color-navy-primary);
+  color: var(--color-white);
+  padding: 3rem;
+  border-radius: 0.125rem; /* rounded-sm */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  max-width: 28rem; /* max-w-md */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.successTitle {
+  font-family: var(--font-lora);
+  font-size: 1.875rem; /* 3xl */
+  margin-bottom: 1rem;
+}
+
+.successMessage {
+  font-family: var(--font-mulish);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2rem;
+  line-height: 1.625;
+}
+
+.editButton {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--color-white);
+  width: 100%;
+}
+
+.editButton:hover {
+  background-color: var(--color-white);
+  color: var(--color-navy-primary);
+}

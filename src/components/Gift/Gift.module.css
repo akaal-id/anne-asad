@@ -1,0 +1,143 @@
+.section {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem; /* space-y-12 */
+  background-color: var(--color-white);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
+  align-items: center;
+}
+
+.title {
+  font-family: var(--font-lora);
+  font-size: clamp(2rem, 2vw, 2.5rem); /* 3xl - 4xl */
+  color: var(--color-navy-primary);
+  font-weight: 400;
+}
+
+.divider {
+  width: 16rem;
+  height: 1px;
+  background-color: var(--color-gold-accent);
+}
+
+.description {
+  max-width: 100%; /* max-w-lg */
+  margin-left: auto;
+  margin-right: auto;
+  font-size: clamp(0.875rem, 2vw, 1rem); /* text-sm */
+  color: var(--color-navy-deep); /* navy-deep/70 */
+  line-height: 1.6; /* leading-relaxed */
+  font-family: var(--font-mulish);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.card {
+  width: 100%;
+  max-width: 24rem;
+  border: 1px solid var(--color-gold-accent); /* gold-accent/30 */
+  padding: 2rem;
+  border-radius: 1rem; /* rounded-sm */
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
+  background-color: var(--color-white);
+  transition: all 300ms;
+}
+
+.card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.cardLabel {
+  font-family: var(--font-mulish);
+  font-size: clamp(0.625rem, 2vw, 0.875rem); /* text-xs */
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(0, 7, 27, 0.5); /* navy-deep/50 */
+}
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+}
+
+.bankName {
+  font-family: var(--font-lora);
+  font-size: 1.5rem; /* 2xl */
+  color: var(--color-navy-primary);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.accountNumber {
+  font-family: var(--font-mulish); /* font-mono */
+  font-size: clamp(1.5rem, 2vw, 2rem); /* xl */
+  color: var(--color-navy-deep);
+  letter-spacing: 0.2em; /* tracking-wider */
+}
+
+.accountName {
+  font-size: 0.875rem; /* text-sm */
+  color: rgba(0, 7, 27, 0.7); /* navy-deep/70 */
+  font-family: var(--font-mulish);
+}
+
+.copyButton {
+  width: 100%;
+  font-size: 0.75rem; /* text-xs */
+  cursor: pointer;
+}
+
+.icon {
+  width: 0.75rem; /* w-3 */
+  height: 0.75rem; /* h-3 */
+  margin-right: 0.5rem;
+}
+
+.qrisContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 2rem;
+  border: 1px solid var(--color-gold-accent);
+  border-radius: 1rem;
+  max-width: 24rem;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: white;
+}
+
+.qrisContainer:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: all 300ms;
+}
+
+.qrisImage {
+  width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
+.downloadButton {
+  width: 100%;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  padding: 1rem;
+  cursor: pointer;
+}

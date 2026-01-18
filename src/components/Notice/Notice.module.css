@@ -1,0 +1,49 @@
+.section {
+  text-align: center;
+  padding-top: 4rem; /* py-16 */
+  padding-bottom: 4rem;
+}
+
+.card {
+  background-color: #f8fafc; /* slate-50 */
+  border: 1px solid rgba(214, 181, 133, 0.2); /* gold-accent/20 */
+  padding: 2rem; /* p-8 */
+  border-radius: 0.125rem; /* rounded-sm */
+  max-width: 42rem; /* max-w-2xl */
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* space-y-6 */
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 3rem; /* md:p-12 */
+  }
+}
+
+.text {
+  font-family: var(--font-mulish);
+  color: rgba(0, 7, 27, 0.8); /* navy-deep/80 */
+  line-height: 1.625; /* leading-relaxed */
+  font-size: 0.875rem; /* text-sm */
+}
+
+@media (min-width: 768px) {
+  .text {
+    font-size: 1rem; /* md:text-base */
+  }
+}
+
+.italic {
+  font-style: italic;
+}
+
+.closing {
+  font-family: var(--font-lora);
+  font-size: 1.125rem; /* text-lg */
+  color: var(--color-navy-primary);
+  font-weight: 600;
+}
