@@ -33,14 +33,28 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   const refreshData = async () => {
+    try {
+      const fetchData = async (url: string) => {
+        const res = await fetch(url);
+        if (!res.ok) {
+           const text = await res.text();
+           console.error(`Fetch error for ${url}:`, text);
+           return [];
+        }
+        return res.json();
+      };
+
       const [wishesRes, rsvpRes, invitationsRes] = await Promise.all([
-          fetch('/api/wishes').then(r => r.json()),
-          fetch('/api/rsvp').then(r => r.json()),
-          fetch('/api/invitations').then(r => r.json())
+          fetchData('/api/wishes'),
+          fetchData('/api/rsvp'),
+          fetchData('/api/invitations')
       ]);
       setWishes(wishesRes);
       setRsvps(rsvpRes);
       setInvitations(invitationsRes);
+    } catch (error) {
+      console.error("Error refreshing data:", error);
+    }
   };
 
   // --- Invitation Logic ---

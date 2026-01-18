@@ -3,10 +3,10 @@ import { AdminDashboardClient } from './AdminDashboardClient';
 
 export const dynamic = 'force-dynamic';
 
-export default function AdminPage() {
-  const wishes = db.wishes.getAll();
-  const rsvps = db.rsvp.getAll();
-  const invitations = db.invitations.getAll();
+export default async function AdminPage() {
+  const wishes = await db.wishes.getAll();
+  const rsvps = await db.rsvp.getAll();
+  const invitations = await db.invitations.getAll();
 
   return (
     <AdminDashboardClient 

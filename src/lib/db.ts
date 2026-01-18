@@ -1,33 +1,4 @@
-import fs from 'fs';
-import path from 'path';
-
-const dataDirectory = path.join(process.cwd(), 'src/data');
-const wishesFile = path.join(dataDirectory, 'wishes.json');
-const rsvpFile = path.join(dataDirectory, 'rsvp.json');
-const invitationsFile = path.join(dataDirectory, 'invitations.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(dataDirectory)) {
-  fs.mkdirSync(dataDirectory, { recursive: true });
-}
-
-// Helper to read JSON file
-function readData<T>(filePath: string): T[] {
-  if (!fs.existsSync(filePath)) {
-    return [];
-  }
-  const fileContents = fs.readFileSync(filePath, 'utf8');
-  try {
-    return JSON.parse(fileContents);
-  } catch (e) {
-    return [];
-  }
-}
-
-// Helper to write JSON file
-function writeData<T>(filePath: string, data: T[]) {
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-}
+import { supabase } from './supabase';
 
 export interface Wish {
   id: number;
@@ -53,76 +24,161 @@ export interface Invitation {
 
 export const db = {
   wishes: {
-    getAll: () => readData<Wish>(wishesFile),
-    add: (wish: Omit<Wish, 'id' | 'date'>) => {
-      const wishes = readData<Wish>(wishesFile);
-      const newWish: Wish = {
-        id: Date.now(),
-        ...wish,
-        date: new Date().toLocaleDateString('id-ID', {
+    getAll: async () => {
+      const { data, error } = await supabase
+        .from('wishes')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        console.error('Error fetching wishes:', error);
+        return [];
+      }
+      
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        message: item.message,
+        date: new Date(item.created_at).toLocaleDateString('id-ID', {
             day: 'numeric', month: 'long', year: 'numeric',
             hour: '2-digit', minute: '2-digit'
         })
-      };
-      // Prepend to list
-      writeData(wishesFile, [newWish, ...wishes]);
-      return newWish;
+      })) as Wish[];
     },
-    delete: (id: number) => {
-      const wishes = readData<Wish>(wishesFile);
-      const filteredWishes = wishes.filter(w => w.id !== id);
-      writeData(wishesFile, filteredWishes);
+    add: async (wish: Omit<Wish, 'id' | 'date'>) => {
+      const { data, error } = await supabase
+        .from('wishes')
+        .insert([{ 
+            name: wish.name, 
+            message: wish.message,
+            // created_at is handled by default now() in Supabase or we send it
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      return {
+        id: data.id,
+        name: data.name,
+        message: data.message,
+        date: new Date(data.created_at).toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'long', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        })
+      } as Wish;
     },
-    update: (id: number, data: Partial<Wish>) => {
-      const wishes = readData<Wish>(wishesFile);
-      const updatedWishes = wishes.map(w => w.id === id ? { ...w, ...data } : w);
-      writeData(wishesFile, updatedWishes);
+    delete: async (id: number) => {
+      const { error } = await supabase.from('wishes').delete().eq('id', id);
+      if (error) throw error;
+    },
+    update: async (id: number, data: Partial<Wish>) => {
+      const { error } = await supabase.from('wishes').update(data).eq('id', id);
+      if (error) throw error;
     }
   },
   rsvp: {
-    getAll: () => readData<RsvpData>(rsvpFile),
-    add: (data: Omit<RsvpData, 'id' | 'date'>) => {
-      const rsvps = readData<RsvpData>(rsvpFile);
-      const newRsvp: RsvpData = {
-        id: Date.now(),
-        ...data,
-        date: new Date().toISOString()
-      };
-      writeData(rsvpFile, [newRsvp, ...rsvps]);
-      return newRsvp;
+    getAll: async () => {
+      const { data, error } = await supabase
+        .from('rsvp')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching rsvp:', error);
+        return [];
+      }
+
+      return data.map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        status: item.status,
+        guests: item.guests,
+        date: item.created_at
+      })) as RsvpData[];
     },
-    delete: (id: number) => {
-      const rsvps = readData<RsvpData>(rsvpFile);
-      const filteredRsvps = rsvps.filter(r => r.id !== id);
-      writeData(rsvpFile, filteredRsvps);
+    add: async (data: Omit<RsvpData, 'id' | 'date'>) => {
+      const { data: result, error } = await supabase
+        .from('rsvp')
+        .insert([{ 
+            name: data.name, 
+            status: data.status, 
+            guests: data.guests 
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return {
+        id: result.id,
+        name: result.name,
+        status: result.status,
+        guests: result.guests,
+        date: result.created_at
+      } as RsvpData;
     },
-    update: (id: number, data: Partial<RsvpData>) => {
-      const rsvps = readData<RsvpData>(rsvpFile);
-      const updatedRsvps = rsvps.map(r => r.id === id ? { ...r, ...data } : r);
-      writeData(rsvpFile, updatedRsvps);
+    delete: async (id: number) => {
+      const { error } = await supabase.from('rsvp').delete().eq('id', id);
+      if (error) throw error;
+    },
+    update: async (id: number, data: Partial<RsvpData>) => {
+      const { error } = await supabase.from('rsvp').update(data).eq('id', id);
+      if (error) throw error;
     }
   },
   invitations: {
-    getAll: () => readData<Invitation>(invitationsFile),
-    add: (data: Omit<Invitation, 'id' | 'createdAt'>) => {
-      const invitations = readData<Invitation>(invitationsFile);
-      const newInvitation: Invitation = {
-        id: Date.now(),
-        ...data,
-        createdAt: new Date().toISOString()
-      };
-      writeData(invitationsFile, [newInvitation, ...invitations]);
-      return newInvitation;
+    getAll: async () => {
+      const { data, error } = await supabase
+        .from('invitations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching invitations:', error);
+        return [];
+      }
+
+      return data.map((item: any) => ({
+        id: item.id,
+        slug: item.slug,
+        guestName: item.guest_name,
+        createdAt: item.created_at
+      })) as Invitation[];
     },
-    delete: (id: number) => {
-      const invitations = readData<Invitation>(invitationsFile);
-      const filteredInvitations = invitations.filter(i => i.id !== id);
-      writeData(invitationsFile, filteredInvitations);
+    add: async (data: Omit<Invitation, 'id' | 'createdAt'>) => {
+      const { data: result, error } = await supabase
+        .from('invitations')
+        .insert([{ 
+            guest_name: data.guestName, 
+            slug: data.slug 
+        }])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      return {
+        id: result.id,
+        slug: result.slug,
+        guestName: result.guest_name,
+        createdAt: result.created_at
+      } as Invitation;
     },
-    update: (id: number, data: Partial<Invitation>) => {
-      const invitations = readData<Invitation>(invitationsFile);
-      const updatedInvitations = invitations.map(i => i.id === id ? { ...i, ...data } : i);
-      writeData(invitationsFile, updatedInvitations);
+    delete: async (id: number) => {
+      const { error } = await supabase.from('invitations').delete().eq('id', id);
+      if (error) throw error;
+    },
+    update: async (id: number, data: Partial<Invitation>) => {
+        // Map camelCase to snake_case for specific fields if needed
+        const updateData: any = { ...data };
+        if (data.guestName) {
+            updateData.guest_name = data.guestName;
+            delete updateData.guestName;
+        }
+        
+      const { error } = await supabase.from('invitations').update(updateData).eq('id', id);
+      if (error) throw error;
     }
   }
 };

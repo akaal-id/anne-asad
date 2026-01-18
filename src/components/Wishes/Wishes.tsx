@@ -26,16 +26,21 @@ export function Wishes() {
 
   // Initial fetch
   useEffect(() => {
-    fetch('/api/wishes')
-        .then(res => res.json())
-        .then(data => {
-            if (Array.isArray(data)) {
-                // If we want to merge with initial or just replace
-                // For this demo, let's just use API data if available, or fallback to initial
-                if (data.length > 0) setWishes(data);
+    const fetchWishes = async () => {
+        try {
+            const res = await fetch('/api/wishes');
+            if (!res.ok) throw new Error('Failed to fetch');
+            const data = await res.json();
+            
+            if (Array.isArray(data) && data.length > 0) {
+                setWishes(data);
             }
-        })
-        .catch(err => console.error("Failed to fetch wishes", err));
+        } catch (err) {
+            console.error("Failed to fetch wishes", err);
+        }
+    };
+    
+    fetchWishes();
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
