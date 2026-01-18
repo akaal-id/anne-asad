@@ -86,7 +86,8 @@ export const db = {
       if (error) throw error;
     },
     update: async (id: number, data: Partial<Wish>) => {
-      const { error } = await supabase.from('wishes').update(data).eq('id', id);
+      const { id: _, date, ...updateData } = data as any;
+      const { error } = await supabase.from('wishes').update(updateData).eq('id', id);
       if (error) throw error;
     }
   },
@@ -139,7 +140,8 @@ export const db = {
       if (error) throw error;
     },
     update: async (id: number, data: Partial<RsvpData>) => {
-      const { error } = await supabase.from('rsvp').update(data).eq('id', id);
+      const { id: _, date, ...updateData } = data as any;
+      const { error } = await supabase.from('rsvp').update(updateData).eq('id', id);
       if (error) throw error;
     }
   },
@@ -186,11 +188,12 @@ export const db = {
       if (error) throw error;
     },
     update: async (id: number, data: Partial<Invitation>) => {
-        // Map camelCase to snake_case for specific fields if needed
-        const updateData: any = { ...data };
-        if (data.guestName) {
-            updateData.guest_name = data.guestName;
-            delete updateData.guestName;
+        // Map camelCase to snake_case and remove non-DB fields
+        const { id: _, createdAt, guestName, ...rest } = data as any;
+        const updateData: any = { ...rest };
+        
+        if (guestName) {
+            updateData.guest_name = guestName;
         }
         
       const { error } = await supabase.from('invitations').update(updateData).eq('id', id);

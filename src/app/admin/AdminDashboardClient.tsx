@@ -251,7 +251,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                                 {isEditing ? (
                                     <input 
                                         className="border rounded p-1 w-full"
-                                        value={editForm.guestName}
+                                        value={editForm.guestName || ''}
                                         onChange={(e) => setEditForm({...editForm, guestName: e.target.value})}
                                     />
                                 ) : inv.guestName}
@@ -260,7 +260,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                                 {isEditing ? (
                                     <input 
                                         className="border rounded p-1 w-full"
-                                        value={editForm.slug}
+                                        value={editForm.slug || ''}
                                         onChange={(e) => setEditForm({...editForm, slug: e.target.value})}
                                     />
                                 ) : inv.slug}
