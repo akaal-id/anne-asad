@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
+import { BASE_PATH } from '@/lib/utils';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -14,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
 
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch(`${BASE_PATH}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),

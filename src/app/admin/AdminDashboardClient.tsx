@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Copy, RefreshCw, Trash2, Edit2, Check, X } from 'lucide-react';
 import { Wish, RsvpData, Invitation } from '@/lib/db';
+import { BASE_PATH } from '@/lib/utils';
 
 interface AdminDashboardClientProps {
   initialWishes: Wish[];
@@ -46,9 +47,9 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
       };
 
       const [wishesRes, rsvpRes, invitationsRes] = await Promise.all([
-          fetchData('/api/wishes'),
-          fetchData('/api/rsvp'),
-          fetchData('/api/invitations')
+          fetchData(`${BASE_PATH}/api/wishes`),
+          fetchData(`${BASE_PATH}/api/rsvp`),
+          fetchData(`${BASE_PATH}/api/invitations`)
       ]);
       setWishes(wishesRes);
       setRsvps(rsvpRes);
@@ -67,7 +68,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
     
     setIsGenerating(true);
     try {
-        const res = await fetch('/api/invitations', {
+        const res = await fetch(`${BASE_PATH}/api/invitations`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ guestName, slug: finalSlug })
@@ -87,14 +88,14 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
 
   const handleDeleteInvitation = async (id: number) => {
       if(!confirm('Are you sure you want to delete this invitation?')) return;
-      await fetch(`/api/invitations?id=${id}`, { method: 'DELETE' });
+      await fetch(`${BASE_PATH}/api/invitations?id=${id}`, { method: 'DELETE' });
       refreshData();
   };
 
   // --- Generic Delete/Update Logic ---
   const handleDelete = async (endpoint: string, id: number) => {
       if(!confirm('Are you sure?')) return;
-      await fetch(`/api/${endpoint}?id=${id}`, { method: 'DELETE' });
+      await fetch(`${BASE_PATH}/api/${endpoint}?id=${id}`, { method: 'DELETE' });
       refreshData();
   };
 
@@ -103,7 +104,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
       setRsvps(prev => prev.map(r => r.id === id ? { ...r, attended: checked } : r));
       
       try {
-        await fetch('/api/rsvp', {
+        await fetch(`${BASE_PATH}/api/rsvp`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id, attended: checked })
@@ -125,7 +126,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
   };
 
   const handleSave = async (endpoint: string) => {
-      await fetch(`/api/${endpoint}`, { 
+      await fetch(`${BASE_PATH}/api/${endpoint}`, { 
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(editForm)

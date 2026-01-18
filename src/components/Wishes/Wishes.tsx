@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Wishes.module.css";
+import { BASE_PATH } from "@/lib/utils";
 
 interface Wish {
   id: number;
@@ -28,7 +29,7 @@ export function Wishes() {
   useEffect(() => {
     const fetchWishes = async () => {
         try {
-            const res = await fetch('/api/wishes');
+            const res = await fetch(`${BASE_PATH}/api/wishes`);
             if (!res.ok) throw new Error('Failed to fetch');
             const data = await res.json();
             
@@ -65,7 +66,7 @@ export function Wishes() {
     setError("");
 
     try {
-        const res = await fetch('/api/wishes', {
+        const res = await fetch(`${BASE_PATH}/api/wishes`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, message })

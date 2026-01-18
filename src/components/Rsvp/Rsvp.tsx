@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Check, X } from "lucide-react";
 import { motion } from "framer-motion";
 import styles from "./Rsvp.module.css";
-import { cn } from "@/lib/utils";
+import { cn, BASE_PATH } from "@/lib/utils";
 
 export function Rsvp() {
   const [name, setName] = useState("");
@@ -23,7 +23,7 @@ export function Rsvp() {
     }
     
     try {
-        const res = await fetch('/api/rsvp', {
+        const res = await fetch(`${BASE_PATH}/api/rsvp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, status, guests })
