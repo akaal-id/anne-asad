@@ -49,21 +49,10 @@ export function HomeClient({ guestName }: HomeClientProps) {
       {/* Main Content */}
       <div className={`relative z-0 transition-opacity duration-1000 ${isOpened ? 'opacity-100' : 'opacity-0'}`}>
           <Salam />
-          
-          <ImageSection 
-             src="https://images.unsplash.com/photo-1519225421980-715cb0202128?q=80&w=2000&auto=format&fit=crop" 
-             alt="Wedding Couple"
-          />
 
           <Profile />
 
           <Events />
-
-          <ImageSection 
-             src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2000&auto=format&fit=crop" 
-             alt="Wedding Detail"
-             className="md:h-[400px]"
-          />
 
           <Adab />
           <Wishes />

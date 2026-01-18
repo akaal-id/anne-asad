@@ -61,41 +61,19 @@
   margin-bottom: 1rem;
 }
 
-.heading {
-  font-family: var(--font-lora);
-  font-size: clamp(4.5rem, 5vw, 8rem);
-  line-height: 1;
-  font-weight: 300;
+.logoContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
-@media (min-width: 768px) {
-  .heading {
-    font-size: clamp(3rem, 5vw, 6rem);
-  }
-}
-
-@media (min-width: 1024px) {
-  .heading {
-    font-size: clamp(4rem, 5vw, 8rem);
-  }
-}
-
-.ampersand {
-  font-size: 1.25rem;
-}
-
-@media (min-width: 768px) {
-  .ampersand {
-    font-size: 1.25rem;
-  }
-}
-
-.divider {
-  width: 1px;
-  height: 4rem;
-  background-color: rgba(214, 181, 133, 0.5); /* gold-accent/50 */
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+.logoImage {
+  width: auto;
+  height: auto;
+  max-width: 280px; /* Adjust based on preference */
+  max-height: 280px;
+  object-fit: contain;
 }
 
 .date {

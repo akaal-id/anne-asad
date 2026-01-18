@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 4rem;
   background-color: rgb(18, 29, 71);
+  margin-top: -1px; /* Remove potential sub-pixel gap */
 }
 
 .header {

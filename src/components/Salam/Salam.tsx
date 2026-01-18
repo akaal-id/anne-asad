@@ -9,14 +9,15 @@ export function Salam() {
   return (
     <Section className={styles.section}>
       <div className={styles.imageContainer}>
-        {/* Placeholder image - replace src with your actual image */}
         <Image 
-          src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?q=80&w=2000&auto=format&fit=crop" 
-          alt="Couple Photo" 
+          src="/images/anne-asad-cartoon.jpg" 
+          alt="Anne & Asad Cartoon" 
           width={1200} 
           height={600}
           className={styles.image}
+          priority
         />
+        <div className={styles.imageGradient}></div>
       </div>
 
       <motion.div

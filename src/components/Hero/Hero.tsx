@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import styles from "./Hero.module.css";
 
 interface HeroProps {
@@ -40,20 +41,20 @@ export function Hero({ onOpen, isOpened, guestName = "Bapak/Ibu/Saudara/i" }: He
 
         <div className={styles.textGroup}>
           <p className={styles.subHeading}>The Wedding of</p>
-          <h1 className={styles.heading}>
-            Aulianne <br /> & <br /> Asad
-          </h1>
+          <div className={styles.logoContainer}>
+            <Image 
+              src="/icon/aa-icon.png" 
+              alt="Aulianne & Asad" 
+              width={300} 
+              height={300}
+              className={styles.logoImage}
+              priority
+            />
+          </div>
         </div>
 
-        <motion.div 
-          className={styles.divider}
-          initial={{ height: 0 }}
-          animate={{ height: 64 }}
-          transition={{ delay: 0.5, duration: 0.8 }}
-        />
-
         <div className={styles.textGroup}>
-          <p className={styles.date}>Saturday, 07 . 02 . 2026</p> {/* Placeholder date */}
+          <p className={styles.date}>Sabtu, 07 . 02 . 2026</p> {/* Placeholder date */}
         </div>
 
         <div className={styles.buttonWrapper}>

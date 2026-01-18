@@ -2,11 +2,24 @@
 
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import styles from "./Profile.module.css";
 
 export function Profile() {
   return (
     <Section className={styles.section}>
+      <div className={styles.headerImageContainer}>
+        <Image 
+          src="/images/anne-asad-cartoon-2.jpg" 
+          alt="Couple Cartoon" 
+          width={1200} 
+          height={600}
+          className={styles.headerImage}
+          priority
+        />
+        <div className={styles.imageGradient}></div>
+      </div>
+
       {/* Bride */}
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
@@ -15,7 +28,12 @@ export function Profile() {
         className={styles.profileContainer}
       >
         <div className={styles.imageContainer}>
-             <div className={styles.imagePlaceholder}>A</div>
+             <Image 
+               src="/images/anne-cartoon.jpg" 
+               alt="Aulianne Farah Anissa" 
+               fill
+               className={styles.profileImage}
+             />
         </div>
         <h3 className={styles.name}>Aulianne Farah Anissa</h3>
         <div className={styles.details}>
@@ -36,7 +54,12 @@ export function Profile() {
         className={styles.profileContainer}
       >
          <div className={styles.imageContainer}>
-            <div className={styles.imagePlaceholder}>A</div>
+            <Image 
+               src="/images/asad-cartoon.jpg" 
+               alt="Asad Muhammad" 
+               fill
+               className={styles.profileImage}
+             />
         </div>
         <h3 className={styles.name}>Asad Muhammad, S. Ip.</h3>
         <div className={styles.details}>

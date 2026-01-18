@@ -1,4 +1,5 @@
 import styles from "./Footer.module.css";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -7,7 +8,7 @@ export function Footer() {
         <p className={styles.quote}>
           "Semoga Allah menghimpun yang terserak dari keduanya, memberkati mereka berdua dan kiranya Allah meningkatkan kualitas keturunan mereka, menjadikannya pembuka rahmat, sumber ilmu dan hikmah serta pemberi rasa aman bagi umat."
         </p>
-        <p className={styles.closing}>وَ عَلَيْكُمُ السَّلاَمُ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ</p>
+        <p className={styles.closing}>{`وَالسَّلَامُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ`}</p>
       </div>
       
       <div className={styles.divider}></div>
@@ -19,6 +20,18 @@ export function Footer() {
             <p>Keluarga Besar<br />Alm. Galuh Septono Wahyudi, S. Sos & Arifa Kurniasari</p>
             <p>Keluarga Besar<br /> Alm. Ir. Adrian & Sulistyowati, SS</p>
         </div>
+      </div>
+
+      <div className={styles.poweredContainer}>
+        <div className={styles.dividerSmall}></div>
+        <p className={styles.poweredText}>Powered by</p>
+        <Image 
+          src="/icon/logo-white-rgb.png" 
+          alt="Logo" 
+          width={80} 
+          height={30}
+          className={styles.logo}
+        />
       </div>
     </footer>
   );

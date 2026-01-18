@@ -66,7 +66,7 @@ export function Rsvp() {
         <h2 className={styles.title}>Konfirmasi Kehadiran</h2>
         <div className={styles.divider}></div>
         <p className={styles.description}>
-          Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu.
+        Tanpa mengurangi rasa hormat, mohon kerelaan Bapak/Ibu/Saudara/i untuk mengonfirmasi kehadiran melalui tautan di bawah ini sebelum tanggal 1 Februari 2026.
         </p>
       </div>
 

@@ -3,10 +3,17 @@
 import { Section } from "@/components/ui/Section";
 import { Sparkles } from "lucide-react";
 import styles from "./Adab.module.css";
+import { ImageSection } from "@/components/ImageSection/ImageSection";
 
 export function Adab() {
   return (
     <Section className={styles.section}>
+      <ImageSection 
+         src="/images/anne-asad-cartoon-4.jpg" 
+         alt="Wedding Detail"
+         className={`${styles.headerImage} mask-gradient-bottom`}
+      />
+
       <div className={styles.container}>
         <div className={styles.iconWrapper}>
              <Sparkles className={styles.icon} />
