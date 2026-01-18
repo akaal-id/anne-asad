@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Copy, RefreshCw, Trash2, Edit2, Check, X } from 'lucide-react';
 import { Wish, RsvpData, Invitation } from '@/lib/db';
@@ -117,20 +117,12 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
       refreshData();
   };
 
-  const getInvitationLink = (slug: string) => {
-      if (typeof window !== 'undefined') {
-          return `${window.location.origin}/?u=${slug}`; // Using slug as the param value or name directly?
-          // Based on previous implementation, ?u= reads the name directly. 
-          // If we want to use the slug to lookup the name, we'd need to change the homepage logic.
-          // But looking at the prompt "list tab list undangan yang sudah dibuat", implies managing these links.
-          // If the homepage simply takes ?u=Name, then we don't strictly need a database for links unless we want to "manage" them (e.g. tracking who we invited).
-          // If the previous homepage implementation used ?u=Name directly without DB lookup, then "slug" here might just be the name parameter value.
-          // Let's assume ?u=GuestName for now as per previous step.
-          // So "slug" here essentially acts as the name displayed in the URL if different, or just stored record.
-          // Actually, let's keep it simple: ?u=NameEncoded.
-      }
-      return `/?u=${slug}`;
-  };
+  const [origin, setOrigin] = useState('');
+
+  useEffect(() => {
+    setOrigin(window.location.origin);
+  }, []);
+
 
   const copyLink = (text: string) => {
       navigator.clipboard.writeText(text);
@@ -234,7 +226,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                     .filter(inv => inv.guestName.toLowerCase().includes(searchQuery.toLowerCase()))
                     .map((inv) => {
                       const isEditing = editingId === inv.id;
-                      const link = getInvitationLink(inv.guestName); // Using guestName as param based on page.tsx logic
+                      const linkUrl = origin ? `${origin}/?u=${inv.slug || inv.guestName}` : `/?u=${inv.slug || inv.guestName}`;
 
                       return (
                         <tr key={inv.id} className="hover:bg-gray-50">
@@ -258,9 +250,9 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                             </td>
                             <td className="px-4 py-3">
                                 <div className="flex items-center gap-2">
-                                    <span className="text-xs text-gray-400 truncate max-w-[200px]">{link}</span>
-                                    <button onClick={() => copyLink(link)} className="text-navy-primary hover:text-navy-deep">
-                                        {copiedLink === link ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                                    <span className="text-xs text-gray-400 truncate max-w-[200px]">{linkUrl}</span>
+                                    <button onClick={() => copyLink(linkUrl)} className="text-navy-primary hover:text-navy-deep">
+                                        {copiedLink === linkUrl ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                                     </button>
                                 </div>
                             </td>
