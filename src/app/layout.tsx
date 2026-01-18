@@ -20,14 +20,18 @@ export const metadata: Metadata = {
   title: "The Wedding of Aulianne & Asad",
   description: "Undangan Pernikahan Aulianne & Asad. Kami mengundang Bapak/Ibu/Saudara/i untuk hadir di acara pernikahan kami.",
   keywords: ["wedding", "undangan", "pernikahan", "aulianne", "asad"],
+  icons: {
+    icon: "/icon/aa-icon.png",
+    apple: "/icon/aa-icon.png",
+  },
   openGraph: {
     title: "The Wedding of Aulianne & Asad",
     description: "Undangan Pernikahan Aulianne & Asad",
-    url: "https://anne-asad-wedding.vercel.app", // Placeholder URL
+    url: "https://anne-asad.vercel.app",
     siteName: "Aulianne & Asad Wedding",
     images: [
       {
-        url: "https://images.unsplash.com/photo-1519225421980-715cb0202128?q=80&w=1200&auto=format&fit=crop", // Placeholder OG Image
+        url: "/images/anne-asad-cartoon.jpg", // Updated OG Image to the couple's cartoon
         width: 1200,
         height: 630,
         alt: "Aulianne & Asad Wedding",
