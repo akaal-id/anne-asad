@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import aaIcon from "../../../public/icon/aa-icon.png";
 import styles from "./Hero.module.css";
 
 interface HeroProps {
@@ -43,7 +44,7 @@ export function Hero({ onOpen, isOpened, guestName = "Bapak/Ibu/Saudara/i" }: He
           <p className={styles.subHeading}>The Wedding of</p>
           <div className={styles.logoContainer}>
             <Image 
-              src="/icon/aa-icon.png" 
+              src={aaIcon}
               alt="Aulianne & Asad" 
               width={300} 
               height={300}

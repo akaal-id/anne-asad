@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Lora, Mulish } from "next/font/google"; // Changed Inter to Mulish
+import { BASE_PATH } from "@/lib/utils";
 import "./globals.css";
 
 const lora = Lora({
@@ -21,8 +22,8 @@ export const metadata: Metadata = {
   description: "Undangan Pernikahan Aulianne & Asad. Kami mengundang Bapak/Ibu/Saudara/i untuk hadir di acara pernikahan kami.",
   keywords: ["wedding", "undangan", "pernikahan", "aulianne", "asad"],
   icons: {
-    icon: "/icon/aa-icon.png",
-    apple: "/icon/aa-icon.png",
+    icon: `${BASE_PATH}/icon/aa-icon.png`,
+    apple: `${BASE_PATH}/icon/aa-icon.png`,
   },
   openGraph: {
     title: "The Wedding of Aulianne & Asad",
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Aulianne & Asad Wedding",
     images: [
       {
-        url: "/images/anne-asad-cartoon.jpg", // Updated OG Image to the couple's cartoon
+        url: `${BASE_PATH}/images/anne-asad-cartoon.jpg`, // Updated OG Image to the couple's cartoon
         width: 1200,
         height: 630,
         alt: "Aulianne & Asad Wedding",

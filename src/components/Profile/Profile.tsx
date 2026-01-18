@@ -3,6 +3,9 @@
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import anneAsadCartoon2 from "../../../public/images/anne-asad-cartoon-2.jpg";
+import anneCartoon from "../../../public/images/anne-cartoon.jpg";
+import asadCartoon from "../../../public/images/asad-cartoon.jpg";
 import styles from "./Profile.module.css";
 
 export function Profile() {
@@ -10,7 +13,7 @@ export function Profile() {
     <Section className={styles.section}>
       <div className={styles.headerImageContainer}>
         <Image 
-          src="/images/anne-asad-cartoon-2.jpg" 
+          src={anneAsadCartoon2}
           alt="Couple Cartoon" 
           width={1200} 
           height={600}
@@ -29,7 +32,7 @@ export function Profile() {
       >
         <div className={styles.imageContainer}>
              <Image 
-               src="/images/anne-cartoon.jpg" 
+               src={anneCartoon}
                alt="Aulianne Farah Anissa" 
                fill
                className={styles.profileImage}
@@ -55,7 +58,7 @@ export function Profile() {
       >
          <div className={styles.imageContainer}>
             <Image 
-               src="/images/asad-cartoon.jpg" 
+               src={asadCartoon}
                alt="Asad Muhammad" 
                fill
                className={styles.profileImage}

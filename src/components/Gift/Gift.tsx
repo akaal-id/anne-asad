@@ -6,7 +6,6 @@ import { Copy, Download } from "lucide-react";
 import { useState } from "react";
 import Image from "next/image";
 import styles from "./Gift.module.css";
-import { BASE_PATH } from "@/lib/utils";
 
 export function Gift() {
   const [copied, setCopied] = useState("");
@@ -20,7 +19,7 @@ export function Gift() {
   const handleDownloadQR = () => {
     // Logic to download image
     const link = document.createElement("a");
-    link.href = `${BASE_PATH}/images/qris.png`; // Replace with actual path
+    link.href = "/images/qris.png"; // Replace with actual path
     link.download = "QRIS-Wedding.png";
     document.body.appendChild(link);
     link.click();

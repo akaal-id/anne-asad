@@ -2,12 +2,12 @@
 
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import styles from "./ImageSection.module.css";
 import { cn } from "@/lib/utils";
 
 interface ImageSectionProps {
-  src: string;
+  src: string | StaticImageData;
   alt: string;
   className?: string;
 }

@@ -3,6 +3,7 @@
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import anneAsadCartoon from "../../../public/images/anne-asad-cartoon.jpg";
 import styles from "./Salam.module.css";
 
 export function Salam() {
@@ -10,7 +11,7 @@ export function Salam() {
     <Section className={styles.section}>
       <div className={styles.imageContainer}>
         <Image 
-          src="/images/anne-asad-cartoon.jpg" 
+          src={anneAsadCartoon}
           alt="Anne & Asad Cartoon" 
           width={1200} 
           height={600}

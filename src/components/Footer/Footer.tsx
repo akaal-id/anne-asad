@@ -1,5 +1,6 @@
 import styles from "./Footer.module.css";
 import Image from "next/image";
+import logoWhite from "../../../public/icon/logo-white-rgb.png";
 
 export function Footer() {
   return (
@@ -26,7 +27,7 @@ export function Footer() {
         <div className={styles.dividerSmall}></div>
         <p className={styles.poweredText}>Powered by</p>
         <Image 
-          src="/icon/logo-white-rgb.png" 
+          src={logoWhite}
           alt="Logo" 
           width={80} 
           height={30}

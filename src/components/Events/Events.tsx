@@ -6,6 +6,7 @@ import { MapPin, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import styles from "./Events.module.css";
+import masjidAnNoor from "../../../public/images/masjid-an-noor.jpg";
 
 export function Events() {
   return (
@@ -45,7 +46,7 @@ export function Events() {
          <div className={styles.locationContainer}>
          <div className={styles.mosqueImageContainer}>
               <Image 
-                src="/images/masjid-an-noor.jpg" 
+                src={masjidAnNoor}
                 alt="Masjid An Noor, Ciputat" 
                 fill
                 className={styles.mosqueImage}
