@@ -131,13 +131,31 @@
   color: var(--color-gold-accent);
 }
 
+.mosqueImageContainer {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  position: relative;
+  background-color: #f8fafc;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.mosqueImage {
+  object-fit: cover;
+  transition: transform 500ms;
+}
+
+.mosqueImageContainer:hover .mosqueImage {
+  transform: scale(1.05);
+}
+
 .mapContainer {
   width: 100%;
   aspect-ratio: 16 / 9;
   background-color: #f8fafc;
   overflow: hidden;
   position: relative;
-  margin-top: 1rem;
+  margin-top: -1rem; /* Adjust spacing since image is above */
 }
 
 .iframe {

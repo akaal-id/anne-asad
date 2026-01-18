@@ -13,6 +13,7 @@ export interface RsvpData {
   status: "hadir" | "tidak";
   guests: number;
   date: string;
+  attended?: boolean; // New field for actual attendance checklist
 }
 
 export interface Invitation {
@@ -20,6 +21,24 @@ export interface Invitation {
   slug: string;
   guestName: string;
   createdAt: string;
+}
+
+function formatDateAgo(dateStr: string): string {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffHours < 1) {
+        return "Baru saja";
+    } else if (diffHours < 24) {
+        return `${diffHours} jam yang lalu`;
+    } else if (diffDays <= 7) {
+        return `${diffDays} hari yang lalu`;
+    } else {
+        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+    }
 }
 
 export const db = {
@@ -39,10 +58,7 @@ export const db = {
         id: item.id,
         name: item.name,
         message: item.message,
-        date: new Date(item.created_at).toLocaleDateString('id-ID', {
-            day: 'numeric', month: 'long', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        })
+        date: formatDateAgo(item.created_at)
       })) as Wish[];
     },
     add: async (wish: Omit<Wish, 'id' | 'date'>) => {
@@ -62,10 +78,7 @@ export const db = {
         id: data.id,
         name: data.name,
         message: data.message,
-        date: new Date(data.created_at).toLocaleDateString('id-ID', {
-            day: 'numeric', month: 'long', year: 'numeric',
-            hour: '2-digit', minute: '2-digit'
-        })
+        date: formatDateAgo(data.created_at)
       } as Wish;
     },
     delete: async (id: number) => {
@@ -94,7 +107,8 @@ export const db = {
         name: item.name,
         status: item.status,
         guests: item.guests,
-        date: item.created_at
+        date: item.created_at,
+        attended: item.attended || false
       })) as RsvpData[];
     },
     add: async (data: Omit<RsvpData, 'id' | 'date'>) => {
@@ -103,7 +117,8 @@ export const db = {
         .insert([{ 
             name: data.name, 
             status: data.status, 
-            guests: data.guests 
+            guests: data.guests,
+            attended: data.attended || false
         }])
         .select()
         .single();
@@ -115,7 +130,8 @@ export const db = {
         name: result.name,
         status: result.status,
         guests: result.guests,
-        date: result.created_at
+        date: result.created_at,
+        attended: result.attended
       } as RsvpData;
     },
     delete: async (id: number) => {

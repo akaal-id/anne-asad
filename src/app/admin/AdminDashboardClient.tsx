@@ -24,6 +24,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
   const [slug, setSlug] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [rsvpSearchQuery, setRsvpSearchQuery] = useState('');
 
   // Edit States
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -95,6 +96,22 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
       if(!confirm('Are you sure?')) return;
       await fetch(`/api/${endpoint}?id=${id}`, { method: 'DELETE' });
       refreshData();
+  };
+
+  const handleAttendanceCheck = async (id: number, checked: boolean) => {
+      // Optimistic update
+      setRsvps(prev => prev.map(r => r.id === id ? { ...r, attended: checked } : r));
+      
+      try {
+        await fetch('/api/rsvp', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id, attended: checked })
+        });
+      } catch (error) {
+        console.error("Failed to update attendance", error);
+        refreshData(); // Revert on error
+      }
   };
 
   const handleEdit = (item: any) => {
@@ -338,78 +355,103 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
 
         {/* --- RSVP TAB --- */}
         {activeTab === 'rsvp' && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-gray-50 text-gray-600 uppercase">
-                <tr>
-                  <th className="px-4 py-3 font-semibold">Waktu</th>
-                  <th className="px-4 py-3 font-semibold">Nama</th>
-                  <th className="px-4 py-3 font-semibold">Status</th>
-                  <th className="px-4 py-3 font-semibold text-center">Jumlah</th>
-                  <th className="px-4 py-3 font-semibold text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {rsvps.map((rsvp) => {
-                    const isEditing = editingId === rsvp.id;
-                    return (
-                        <tr key={rsvp.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{new Date(rsvp.date).toLocaleString()}</td>
-                            <td className="px-4 py-3 font-medium text-navy-deep">
-                                {isEditing ? (
-                                    <input 
-                                        className="border rounded p-1 w-full"
-                                        value={editForm.name}
-                                        onChange={(e) => setEditForm({...editForm, name: e.target.value})}
-                                    />
-                                ) : rsvp.name}
-                            </td>
-                            <td className="px-4 py-3">
-                                {isEditing ? (
-                                    <select 
-                                        className="border rounded p-1"
-                                        value={editForm.status}
-                                        onChange={(e) => setEditForm({...editForm, status: e.target.value})}
-                                    >
-                                        <option value="hadir">Hadir</option>
-                                        <option value="tidak">Tidak Hadir</option>
-                                    </select>
-                                ) : (
-                                    <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
-                                        rsvp.status === 'hadir' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                                    }`}>
-                                        {rsvp.status === 'hadir' ? 'Hadir' : 'Tidak Hadir'}
-                                    </span>
-                                )}
-                            </td>
-                            <td className="px-4 py-3 text-center text-gray-700">
-                                {isEditing && editForm.status === 'hadir' ? (
-                                    <input 
-                                        type="number"
-                                        className="border rounded p-1 w-16"
-                                        value={editForm.guests}
-                                        onChange={(e) => setEditForm({...editForm, guests: Number(e.target.value)})}
-                                    />
-                                ) : rsvp.guests}
-                            </td>
-                            <td className="px-4 py-3 text-right space-x-2">
-                                {isEditing ? (
-                                    <>
-                                        <button onClick={() => handleSave('rsvp')} className="text-green-600 hover:text-green-800"><Check className="h-4 w-4" /></button>
-                                        <button onClick={handleCancelEdit} className="text-gray-500 hover:text-gray-700"><X className="h-4 w-4" /></button>
-                                    </>
-                                ) : (
-                                    <>
-                                        <button onClick={() => handleEdit(rsvp)} className="text-blue-600 hover:text-blue-800"><Edit2 className="h-4 w-4" /></button>
-                                        <button onClick={() => handleDelete('rsvp', rsvp.id)} className="text-red-600 hover:text-red-800"><Trash2 className="h-4 w-4" /></button>
-                                    </>
-                                )}
-                            </td>
-                        </tr>
-                    );
-                })}
-              </tbody>
-            </table>
+          <div className="space-y-4">
+            {/* RSVP Filter */}
+            <div className="flex justify-end">
+              <input 
+                type="text" 
+                placeholder="Cari nama tamu di RSVP..." 
+                className="rounded-md border border-gray-300 p-2 text-sm focus:border-navy-primary focus:outline-none w-full md:w-64"
+                value={rsvpSearchQuery}
+                onChange={(e) => setRsvpSearchQuery(e.target.value)}
+              />
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead className="bg-gray-50 text-gray-600 uppercase">
+                  <tr>
+                    <th className="px-4 py-3 font-semibold">Waktu</th>
+                    <th className="px-4 py-3 font-semibold">Nama</th>
+                    <th className="px-4 py-3 font-semibold">Status</th>
+                    <th className="px-4 py-3 font-semibold text-center">Jumlah</th>
+                    <th className="px-4 py-3 font-semibold text-center">Hadir Hari H</th>
+                    <th className="px-4 py-3 font-semibold text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {rsvps
+                    .filter(r => r.name.toLowerCase().includes(rsvpSearchQuery.toLowerCase()))
+                    .map((rsvp) => {
+                      const isEditing = editingId === rsvp.id;
+                      return (
+                          <tr key={rsvp.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{new Date(rsvp.date).toLocaleString()}</td>
+                              <td className="px-4 py-3 font-medium text-navy-deep">
+                                  {isEditing ? (
+                                      <input 
+                                          className="border rounded p-1 w-full"
+                                          value={editForm.name}
+                                          onChange={(e) => setEditForm({...editForm, name: e.target.value})}
+                                      />
+                                  ) : rsvp.name}
+                              </td>
+                              <td className="px-4 py-3">
+                                  {isEditing ? (
+                                      <select 
+                                          className="border rounded p-1"
+                                          value={editForm.status}
+                                          onChange={(e) => setEditForm({...editForm, status: e.target.value})}
+                                      >
+                                          <option value="hadir">Hadir</option>
+                                          <option value="tidak">Tidak Hadir</option>
+                                      </select>
+                                  ) : (
+                                      <span className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold leading-5 ${
+                                          rsvp.status === 'hadir' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                                      }`}>
+                                          {rsvp.status === 'hadir' ? 'Hadir' : 'Tidak Hadir'}
+                                      </span>
+                                  )}
+                              </td>
+                              <td className="px-4 py-3 text-center text-gray-700">
+                                  {isEditing && editForm.status === 'hadir' ? (
+                                      <input 
+                                          type="number"
+                                          className="border rounded p-1 w-16"
+                                          value={editForm.guests}
+                                          onChange={(e) => setEditForm({...editForm, guests: Number(e.target.value)})}
+                                      />
+                                  ) : rsvp.guests}
+                              </td>
+                              <td className="px-4 py-3 text-center">
+                                  <input 
+                                    type="checkbox" 
+                                    className="h-4 w-4 text-navy-primary rounded border-gray-300 focus:ring-navy-primary"
+                                    checked={!!rsvp.attended}
+                                    onChange={(e) => handleAttendanceCheck(rsvp.id, e.target.checked)}
+                                  />
+                              </td>
+                              <td className="px-4 py-3 text-right space-x-2">
+                                  {isEditing ? (
+                                      <>
+                                          <button onClick={() => handleSave('rsvp')} className="text-green-600 hover:text-green-800"><Check className="h-4 w-4" /></button>
+                                          <button onClick={handleCancelEdit} className="text-gray-500 hover:text-gray-700"><X className="h-4 w-4" /></button>
+                                      </>
+                                  ) : (
+                                      <>
+                                          <button onClick={() => handleEdit(rsvp)} className="text-blue-600 hover:text-blue-800"><Edit2 className="h-4 w-4" /></button>
+                                          <button onClick={() => handleDelete('rsvp', rsvp.id)} className="text-red-600 hover:text-red-800"><Trash2 className="h-4 w-4" /></button>
+                                      </>
+                                  )}
+                              </td>
+                          </tr>
+                      );
+                  })}
+                  {rsvps.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-gray-500">Belum ada data RSVP.</td></tr>}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </div>

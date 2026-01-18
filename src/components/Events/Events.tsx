@@ -4,6 +4,7 @@ import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
 import { MapPin, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import styles from "./Events.module.css";
 
 export function Events() {
@@ -42,6 +43,15 @@ export function Events() {
         </div>
 
          <div className={styles.locationContainer}>
+         <div className={styles.mosqueImageContainer}>
+              <Image 
+                src="/images/masjid-an-noor.jpg" 
+                alt="Masjid An Noor, Ciputat" 
+                fill
+                className={styles.mosqueImage}
+              />
+            </div>
+
           <MapPin className={styles.icon} />
           <p className={styles.locationName}>Masjid An-Noor</p>
           <p className={styles.address}>Jl. RE Martadinata No.60, Cipayung, Kec. Ciputat, Kota Tangerang Selatan, Banten 15411</p>
