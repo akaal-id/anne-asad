@@ -15,17 +15,29 @@ export function Rsvp() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !status) {
       setError("Mohon lengkapi data RSVP.");
       return;
     }
     
-    // Simulate submission
-    setTimeout(() => {
-        setSubmitted(true);
-    }, 500);
+    try {
+        const res = await fetch('/api/rsvp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, status, guests })
+        });
+
+        if (res.ok) {
+            setSubmitted(true);
+        } else {
+            setError("Gagal mengirim konfirmasi. Silakan coba lagi.");
+        }
+    } catch (err) {
+        console.error("RSVP Error", err);
+        setError("Terjadi kesalahan koneksi.");
+    }
   };
 
   if (submitted) {

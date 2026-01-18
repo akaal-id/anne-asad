@@ -2,7 +2,7 @@
 
 import { Section } from "@/components/ui/Section";
 import { Button } from "@/components/ui/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./Wishes.module.css";
 
@@ -24,24 +24,57 @@ export function Wishes() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Initial fetch
+  useEffect(() => {
+    fetch('/api/wishes')
+        .then(res => res.json())
+        .then(data => {
+            if (Array.isArray(data)) {
+                // If we want to merge with initial or just replace
+                // For this demo, let's just use API data if available, or fallback to initial
+                if (data.length > 0) setWishes(data);
+            }
+        })
+        .catch(err => console.error("Failed to fetch wishes", err));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !message.trim()) {
       setError("Mohon isi nama dan ucapan.");
       return;
     }
     
-    const newWish: Wish = {
-      id: Date.now(),
-      name,
-      message,
-      date: "Baru saja",
+    // Optimistic update
+    const tempId = Date.now();
+    const newWishOptimistic: Wish = {
+        id: tempId,
+        name,
+        message,
+        date: "Baru saja" // API usually sets date, but we mock it here
     };
     
-    setWishes([newWish, ...wishes]);
+    setWishes([newWishOptimistic, ...wishes]);
     setName("");
     setMessage("");
     setError("");
+
+    try {
+        const res = await fetch('/api/wishes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, message })
+        });
+        
+        if (res.ok) {
+            const savedWish = await res.json();
+            // Replace optimistic with real
+            setWishes(prev => [savedWish, ...prev.filter(w => w.id !== tempId)]);
+        }
+    } catch (err) {
+        console.error("Failed to save wish", err);
+        // Rollback if needed
+    }
   };
 
   return (
