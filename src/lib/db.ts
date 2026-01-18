@@ -179,6 +179,24 @@ export const db = {
         
       const { error } = await supabase.from('invitations').update(updateData).eq('id', id);
       if (error) throw error;
+    },
+    getBySlug: async (slug: string) => {
+      const { data, error } = await supabase
+        .from('invitations')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      
+      if (error || !data) {
+        return null;
+      }
+      
+      return {
+        id: data.id,
+        slug: data.slug,
+        guestName: data.guest_name,
+        createdAt: data.created_at
+      } as Invitation;
     }
   }
 };
