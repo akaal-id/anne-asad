@@ -30,7 +30,7 @@ export function Rsvp() {
         });
 
         if (res.ok) {
-            setSubmitted(true);
+        setSubmitted(true);
         } else {
             setError("Gagal mengirim konfirmasi. Silakan coba lagi.");
         }

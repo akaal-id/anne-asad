@@ -55,8 +55,8 @@ export function Wishes() {
     const tempId = Date.now();
     const newWishOptimistic: Wish = {
         id: tempId,
-        name,
-        message,
+      name,
+      message,
         date: "Baru saja" // API usually sets date, but we mock it here
     };
     
@@ -127,24 +127,24 @@ export function Wishes() {
         <div className={styles.listWrapper}>
           <h3 className={styles.listTitle}>{wishes.length} Ucapan</h3>
           <div className={styles.listContainer}>
-            <AnimatePresence mode="popLayout">
-              {wishes.map((wish) => (
-                <motion.div 
-                  key={wish.id} 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  layout
-                  className={styles.wishCard}
-                >
-                  <div className={styles.wishHeader}>
-                    <h4 className={styles.wishName}>{wish.name}</h4>
-                    <span className={styles.wishDate}>{wish.date}</span>
-                  </div>
+          <AnimatePresence mode="popLayout">
+            {wishes.map((wish) => (
+              <motion.div 
+                key={wish.id} 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                layout
+                className={styles.wishCard}
+              >
+                <div className={styles.wishHeader}>
+                  <h4 className={styles.wishName}>{wish.name}</h4>
+                  <span className={styles.wishDate}>{wish.date}</span>
+                </div>
                   <p className={styles.wishMessage}>{wish.message}</p>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+              </motion.div>
+            ))}
+          </AnimatePresence>
           </div>
         </div>
       </div>

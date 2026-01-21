@@ -18,7 +18,8 @@ export async function POST(request: Request) {
     const newRsvp = await db.rsvp.add({ name, status, guests: guests || 0 });
     return NextResponse.json(newRsvp);
   } catch (error) {
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("RSVP POST Error:", JSON.stringify(error, null, 2));
+    return NextResponse.json({ error: 'Internal Server Error', details: JSON.stringify(error) }, { status: 500 });
   }
 }
 
