@@ -103,6 +103,47 @@
     font-size: 1rem;
 }
 
+.liveStreamInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: rgba(255, 215, 0, 0.1);
+  border-radius: 8px;
+  flex-wrap: wrap;
+}
+
+.instagramIcon {
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-gold-accent);
+  flex-shrink: 0;
+}
+
+.liveStreamText {
+  font-family: var(--font-mulish);
+  font-size: 0.875rem;
+  color: var(--color-navy-deep);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.instagramHandle {
+  font-weight: 600;
+  color: var(--color-navy-primary);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+
+.instagramHandle:hover {
+  color: var(--color-gold-accent);
+  border-bottom-color: var(--color-gold-accent);
+}
+
 .locationContainer {
   display: flex;
   flex-direction: column;

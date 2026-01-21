@@ -3,6 +3,7 @@
 import { Section } from "@/components/ui/Section";
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { Instagram } from "lucide-react";
 import anneAsadCartoon2 from "../../../public/images/anne-asad-cartoon-2.jpg";
 import anneCartoon from "../../../public/images/anne-cartoon.jpg";
 import asadCartoon from "../../../public/images/asad-cartoon.jpg";
@@ -39,6 +40,15 @@ export function Profile() {
              />
         </div>
         <h3 className={styles.name}>Aulianne Farah Anissa</h3>
+        <a 
+          href="https://instagram.com/auliannefr" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className={styles.instagramContainer}
+        >
+          <Instagram className={styles.instagramIcon} />
+          <span className={styles.instagramHandle}>@auliannefr</span>
+        </a>
         <div className={styles.details}>
           <p>Putri dari</p>
           <p><b>Alm. Galuh Septono Wahyudi, S. Sos</b></p>
@@ -65,6 +75,15 @@ export function Profile() {
              />
         </div>
         <h3 className={styles.name}>Asad Muhammad, S. Ip.</h3>
+        <a 
+          href="https://instagram.com/asadomu" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className={styles.instagramContainer}
+        >
+          <Instagram className={styles.instagramIcon} />
+          <span className={styles.instagramHandle}>@asadomu</span>
+        </a>
         <div className={styles.details}>
           <p>Putra dari</p>
           <p><b>Alm. Ir. Adrian</b></p>

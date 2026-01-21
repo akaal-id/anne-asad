@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Copy, RefreshCw, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Copy, RefreshCw, Trash2, Edit2, Check, X, LogOut } from 'lucide-react';
 import { Wish, RsvpData, Invitation } from '@/lib/db';
 import { BASE_PATH } from '@/lib/utils';
 
@@ -13,6 +14,7 @@ interface AdminDashboardClientProps {
 }
 
 export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvitations }: AdminDashboardClientProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'links' | 'wishes' | 'rsvp'>('links');
   
   // Data states
@@ -148,13 +150,36 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
       setTimeout(() => setCopiedLink(null), 2000);
   };
 
+  const handleLogout = async () => {
+    try {
+      const res = await fetch(`${BASE_PATH}/api/auth/logout`, {
+        method: 'POST',
+      });
+      
+      if (res.ok) {
+        router.push(`${BASE_PATH}/admin/login`);
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Even if API call fails, redirect to login
+      router.push(`${BASE_PATH}/admin/login`);
+      router.refresh();
+    }
+  };
+
   return (
     <div className="container mx-auto p-6 md:p-12 max-w-6xl">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="font-serif text-3xl font-bold text-navy-primary">Admin Dashboard</h1>
-        <Button variant="outline" size="sm" onClick={refreshData}>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={refreshData}>
             <RefreshCw className="mr-2 h-4 w-4" /> Refresh Data
-        </Button>
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700 hover:border-red-300">
+            <LogOut className="mr-2 h-4 w-4" /> Logout
+          </Button>
+        </div>
       </div>
 
       <div className="mb-8 flex space-x-2 border-b border-gray-200 overflow-x-auto">
