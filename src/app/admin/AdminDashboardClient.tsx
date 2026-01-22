@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
-import { Copy, RefreshCw, Trash2, Edit2, Check, X, LogOut } from 'lucide-react';
+import { Copy, RefreshCw, Trash2, Edit2, Check, X, LogOut, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Wish, RsvpData, Invitation } from '@/lib/db';
 import { BASE_PATH } from '@/lib/utils';
 
@@ -36,6 +36,12 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
   // Feedback
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
   const [copiedTextId, setCopiedTextId] = useState<number | null>(null);
+
+  // Pagination states
+  const [invitationsPage, setInvitationsPage] = useState(1);
+  const [wishesPage, setWishesPage] = useState(1);
+  const [rsvpPage, setRsvpPage] = useState(1);
+  const itemsPerPage = 10;
 
   const refreshData = async () => {
     try {
@@ -144,6 +150,22 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
     setOrigin(window.location.origin + BASE_PATH);
   }, []);
 
+  // Reset pagination when tab changes
+  useEffect(() => {
+    setInvitationsPage(1);
+    setWishesPage(1);
+    setRsvpPage(1);
+  }, [activeTab]);
+
+  // Reset pagination when search query changes
+  useEffect(() => {
+    setInvitationsPage(1);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    setRsvpPage(1);
+  }, [rsvpSearchQuery]);
+
 
   const copyLink = (text: string) => {
       navigator.clipboard.writeText(text);
@@ -188,6 +210,20 @@ Hormat kami, Anne & Asad`;
     navigator.clipboard.writeText(customText);
     setCopiedTextId(inv.id);
     setTimeout(() => setCopiedTextId(null), 2000);
+  };
+
+  // Pagination helper
+  const paginate = <T,>(items: T[], page: number, perPage: number) => {
+    const startIndex = (page - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    return {
+      paginatedItems: items.slice(startIndex, endIndex),
+      totalPages: Math.ceil(items.length / perPage),
+      totalItems: items.length,
+      currentPage: page,
+      startIndex: startIndex + 1,
+      endIndex: Math.min(endIndex, items.length)
+    };
   };
 
   const handleLogout = async () => {
@@ -298,7 +334,8 @@ Hormat kami, Anne & Asad`;
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 text-gray-600 uppercase">
                   <tr>
-                    <th className="px-4 py-3 font-semibold">Nama Tamu</th>
+                    <th className="px-4 py-3 font-semibold w-12">No</th>
+                    <th className="px-4 py-3 font-semibold max-w-[200px]">Nama Tamu</th>
                     <th className="px-4 py-3 font-semibold">URL Slug</th>
                     <th className="px-4 py-3 font-semibold">Link</th>
                     <th className="px-4 py-3 font-semibold">Copy Teks Undangan</th>
@@ -306,22 +343,33 @@ Hormat kami, Anne & Asad`;
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {invitations
-                    .filter(inv => inv.guestName.toLowerCase().includes(searchQuery.toLowerCase()))
-                    .map((inv) => {
+                  {(() => {
+                    const filtered = invitations.filter(inv => inv.guestName.toLowerCase().includes(searchQuery.toLowerCase()));
+                    const { paginatedItems, totalPages, totalItems, currentPage, startIndex } = paginate(filtered, invitationsPage, itemsPerPage);
+                    
+                    // Reset page if current page is out of bounds
+                    if (currentPage > totalPages && totalPages > 0) {
+                      setInvitationsPage(1);
+                    }
+                    
+                    return paginatedItems.map((inv, index) => {
                       const isEditing = editingId === inv.id;
                       const linkUrl = origin ? `${origin}/?u=${inv.slug || inv.guestName}` : `/?u=${inv.slug || inv.guestName}`;
 
+                      const rowNumber = startIndex + index;
                       return (
                         <tr key={inv.id} className="hover:bg-gray-50">
-                            <td className="px-4 py-3 font-medium text-navy-deep">
+                            <td className="px-4 py-3 text-gray-500 text-center">{rowNumber}</td>
+                            <td className="px-4 py-3 font-medium text-navy-deep max-w-[200px]">
                                 {isEditing ? (
                                     <input 
                                         className="border rounded p-1 w-full"
                                         value={editForm.guestName || ''}
                                         onChange={(e) => setEditForm({...editForm, guestName: e.target.value})}
                                     />
-                                ) : inv.guestName}
+                                ) : (
+                                    <span className="truncate block" title={inv.guestName}>{inv.guestName}</span>
+                                )}
                             </td>
                             <td className="px-4 py-3 text-gray-500">
                                 {isEditing ? (
@@ -374,10 +422,50 @@ Hormat kami, Anne & Asad`;
                             </td>
                         </tr>
                       );
-                  })}
-                  {invitations.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-gray-500">Belum ada undangan.</td></tr>}
+                    });
+                  })()}
+                  {invitations.filter(inv => inv.guestName.toLowerCase().includes(searchQuery.toLowerCase())).length === 0 && (
+                    <tr><td colSpan={6} className="p-4 text-center text-gray-500">Belum ada undangan.</td></tr>
+                  )}
                 </tbody>
               </table>
+              
+              {/* Pagination Controls */}
+              {(() => {
+                const filtered = invitations.filter(inv => inv.guestName.toLowerCase().includes(searchQuery.toLowerCase()));
+                const { totalPages, totalItems, currentPage, startIndex, endIndex } = paginate(filtered, invitationsPage, itemsPerPage);
+                
+                if (totalPages <= 1) return null;
+                
+                return (
+                  <div className="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3">
+                    <div className="text-sm text-gray-700">
+                      Menampilkan <span className="font-medium">{startIndex}</span> sampai <span className="font-medium">{endIndex}</span> dari <span className="font-medium">{totalItems}</span> undangan
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setInvitationsPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-1"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Sebelumnya
+                      </button>
+                      <span className="text-sm text-gray-700">
+                        Halaman {currentPage} dari {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setInvitationsPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-1"
+                      >
+                        Selanjutnya
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}
@@ -388,26 +476,38 @@ Hormat kami, Anne & Asad`;
             <table className="w-full text-left text-sm">
               <thead className="bg-gray-50 text-gray-600 uppercase">
                 <tr>
+                  <th className="px-4 py-3 font-semibold w-12">No</th>
                   <th className="px-4 py-3 font-semibold">Waktu</th>
-                  <th className="px-4 py-3 font-semibold">Nama</th>
+                  <th className="px-4 py-3 font-semibold max-w-[200px]">Nama</th>
                   <th className="px-4 py-3 font-semibold">Ucapan</th>
                   <th className="px-4 py-3 font-semibold text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {wishes.map((wish) => {
+                {(() => {
+                  const { paginatedItems, totalPages, totalItems, currentPage, startIndex } = paginate(wishes, wishesPage, itemsPerPage);
+                  
+                  if (currentPage > totalPages && totalPages > 0) {
+                    setWishesPage(1);
+                  }
+                  
+                  return paginatedItems.map((wish, index) => {
                     const isEditing = editingId === wish.id;
+                    const rowNumber = startIndex + index;
                     return (
                         <tr key={wish.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-3 text-gray-500 text-center">{rowNumber}</td>
                             <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{wish.date}</td>
-                            <td className="px-4 py-3 font-medium text-navy-deep">
+                            <td className="px-4 py-3 font-medium text-navy-deep max-w-[200px]">
                                 {isEditing ? (
                                     <input 
                                         className="border rounded p-1 w-full"
                                         value={editForm.name}
                                         onChange={(e) => setEditForm({...editForm, name: e.target.value})}
                                     />
-                                ) : wish.name}
+                                ) : (
+                                    <span className="truncate block" title={wish.name}>{wish.name}</span>
+                                )}
                             </td>
                             <td className="px-4 py-3 text-gray-700 max-w-md">
                                 {isEditing ? (
@@ -433,9 +533,46 @@ Hormat kami, Anne & Asad`;
                             </td>
                         </tr>
                     );
-                })}
+                  });
+                })()}
               </tbody>
             </table>
+            
+            {/* Pagination Controls */}
+            {(() => {
+              const { totalPages, totalItems, currentPage, startIndex, endIndex } = paginate(wishes, wishesPage, itemsPerPage);
+              
+              if (totalPages <= 1) return null;
+              
+              return (
+                <div className="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3">
+                  <div className="text-sm text-gray-700">
+                    Menampilkan <span className="font-medium">{startIndex}</span> sampai <span className="font-medium">{endIndex}</span> dari <span className="font-medium">{totalItems}</span> ucapan
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setWishesPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-1"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                      Sebelumnya
+                    </button>
+                    <span className="text-sm text-gray-700">
+                      Halaman {currentPage} dari {totalPages}
+                    </span>
+                    <button
+                      onClick={() => setWishesPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-1"
+                    >
+                      Selanjutnya
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 
@@ -457,8 +594,9 @@ Hormat kami, Anne & Asad`;
               <table className="w-full text-left text-sm">
                 <thead className="bg-gray-50 text-gray-600 uppercase">
                   <tr>
+                    <th className="px-4 py-3 font-semibold w-12">No</th>
                     <th className="px-4 py-3 font-semibold">Waktu</th>
-                    <th className="px-4 py-3 font-semibold">Nama</th>
+                    <th className="px-4 py-3 font-semibold max-w-[200px]">Nama</th>
                     <th className="px-4 py-3 font-semibold">Status</th>
                     <th className="px-4 py-3 font-semibold text-center">Jumlah</th>
                     <th className="px-4 py-3 font-semibold text-center">Hadir Hari H</th>
@@ -466,21 +604,31 @@ Hormat kami, Anne & Asad`;
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {rsvps
-                    .filter(r => r.name.toLowerCase().includes(rsvpSearchQuery.toLowerCase()))
-                    .map((rsvp) => {
+                  {(() => {
+                    const filtered = rsvps.filter(r => r.name.toLowerCase().includes(rsvpSearchQuery.toLowerCase()));
+                    const { paginatedItems, totalPages, totalItems, currentPage, startIndex } = paginate(filtered, rsvpPage, itemsPerPage);
+                    
+                    if (currentPage > totalPages && totalPages > 0) {
+                      setRsvpPage(1);
+                    }
+                    
+                    return paginatedItems.map((rsvp, index) => {
                       const isEditing = editingId === rsvp.id;
+                      const rowNumber = startIndex + index;
                       return (
                           <tr key={rsvp.id} className="hover:bg-gray-50">
+                              <td className="px-4 py-3 text-gray-500 text-center">{rowNumber}</td>
                               <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{new Date(rsvp.date).toLocaleString()}</td>
-                              <td className="px-4 py-3 font-medium text-navy-deep">
+                              <td className="px-4 py-3 font-medium text-navy-deep max-w-[200px]">
                                   {isEditing ? (
                                       <input 
                                           className="border rounded p-1 w-full"
                                           value={editForm.name}
                                           onChange={(e) => setEditForm({...editForm, name: e.target.value})}
                                       />
-                                  ) : rsvp.name}
+                                  ) : (
+                                      <span className="truncate block" title={rsvp.name}>{rsvp.name}</span>
+                                  )}
                               </td>
                               <td className="px-4 py-3">
                                   {isEditing ? (
@@ -533,10 +681,50 @@ Hormat kami, Anne & Asad`;
                               </td>
                           </tr>
                       );
-                  })}
-                  {rsvps.length === 0 && <tr><td colSpan={6} className="p-4 text-center text-gray-500">Belum ada data RSVP.</td></tr>}
+                    });
+                  })()}
+                  {rsvps.filter(r => r.name.toLowerCase().includes(rsvpSearchQuery.toLowerCase())).length === 0 && (
+                    <tr><td colSpan={7} className="p-4 text-center text-gray-500">Belum ada data RSVP.</td></tr>
+                  )}
                 </tbody>
               </table>
+              
+              {/* Pagination Controls */}
+              {(() => {
+                const filtered = rsvps.filter(r => r.name.toLowerCase().includes(rsvpSearchQuery.toLowerCase()));
+                const { totalPages, totalItems, currentPage, startIndex, endIndex } = paginate(filtered, rsvpPage, itemsPerPage);
+                
+                if (totalPages <= 1) return null;
+                
+                return (
+                  <div className="mt-4 flex items-center justify-between border-t border-gray-200 px-4 py-3">
+                    <div className="text-sm text-gray-700">
+                      Menampilkan <span className="font-medium">{startIndex}</span> sampai <span className="font-medium">{endIndex}</span> dari <span className="font-medium">{totalItems}</span> RSVP
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setRsvpPage(prev => Math.max(1, prev - 1))}
+                        disabled={currentPage === 1}
+                        className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-1"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                        Sebelumnya
+                      </button>
+                      <span className="text-sm text-gray-700">
+                        Halaman {currentPage} dari {totalPages}
+                      </span>
+                      <button
+                        onClick={() => setRsvpPage(prev => Math.min(totalPages, prev + 1))}
+                        disabled={currentPage === totalPages}
+                        className="px-3 py-1 text-sm border rounded-md disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 flex items-center gap-1"
+                      >
+                        Selanjutnya
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </div>
         )}

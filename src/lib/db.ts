@@ -1,13 +1,13 @@
 import { supabase } from './supabase';
 
 // Timeout utility for database operations
-const withTimeout = <T>(promise: Promise<T>, timeoutMs: number = 10000): Promise<T> => {
+const withTimeout = <T,>(promise: Promise<T>, timeoutMs: number = 10000): Promise<T> => {
   return Promise.race([
     promise,
     new Promise<T>((_, reject) =>
       setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)
     )
-  ]);
+  ]) as Promise<T>;
 };
 
 export interface Wish {
@@ -55,18 +55,21 @@ export const db = {
   wishes: {
     getAll: async () => {
       try {
-        const { data, error } = await withTimeout(
-          supabase
-            .from('wishes')
-            .select('*')
-            .order('created_at', { ascending: false }),
-          10000
-        );
+        const queryPromise = supabase
+          .from('wishes')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        
+        const { data, error } = result as { data: any[] | null; error: any };
         
         if (error) {
           console.error('Error fetching wishes:', error);
           return [];
         }
+        
+        if (!data) return [];
         
         return data.map((item: any) => ({
           id: item.id,
@@ -81,19 +84,20 @@ export const db = {
     },
     add: async (wish: Omit<Wish, 'id' | 'date'>) => {
       try {
-        const { data, error } = await withTimeout(
-          supabase
-            .from('wishes')
-            .insert([{ 
-                name: wish.name, 
-                message: wish.message,
-            }])
-            .select()
-            .single(),
-          10000 // 10 second timeout
-        );
+        const queryPromise = supabase
+          .from('wishes')
+          .insert([{ 
+              name: wish.name, 
+              message: wish.message,
+          }])
+          .select()
+          .single();
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { data, error } = result as { data: any | null; error: any };
 
         if (error) throw error;
+        if (!data) throw new Error('No data returned from insert');
       
         return {
           id: data.id,
@@ -108,10 +112,9 @@ export const db = {
     },
     delete: async (id: number) => {
       try {
-        const { error } = await withTimeout(
-          supabase.from('wishes').delete().eq('id', id),
-          10000
-        );
+        const queryPromise = supabase.from('wishes').delete().eq('id', id);
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { error } = result as { error: any };
         if (error) throw error;
       } catch (error) {
         console.error('Error deleting wish:', error);
@@ -121,10 +124,9 @@ export const db = {
     update: async (id: number, data: Partial<Wish>) => {
       try {
         const { id: _, date, ...updateData } = data as any;
-        const { error } = await withTimeout(
-          supabase.from('wishes').update(updateData).eq('id', id),
-          10000
-        );
+        const queryPromise = supabase.from('wishes').update(updateData).eq('id', id);
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { error } = result as { error: any };
         if (error) throw error;
       } catch (error) {
         console.error('Error updating wish:', error);
@@ -135,18 +137,20 @@ export const db = {
   rsvp: {
     getAll: async () => {
       try {
-        const { data, error } = await withTimeout(
-          supabase
-            .from('rsvp')
-            .select('*')
-            .order('created_at', { ascending: false }),
-          10000
-        );
+        const queryPromise = supabase
+          .from('rsvp')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { data, error } = result as { data: any[] | null; error: any };
 
         if (error) {
           console.error('Error fetching rsvp:', error);
           return [];
         }
+
+        if (!data) return [];
 
         return data.map((item: any) => ({
           id: item.id,
@@ -163,29 +167,30 @@ export const db = {
     },
     add: async (data: Omit<RsvpData, 'id' | 'date'>) => {
       try {
-        const { data: result, error } = await withTimeout(
-          supabase
-            .from('rsvp')
-            .insert([{ 
-                name: data.name, 
-                status: data.status, 
-                guests: data.guests,
-                attended: data.attended || false
-            }])
-            .select()
-            .single(),
-          10000
-        );
+        const queryPromise = supabase
+          .from('rsvp')
+          .insert([{ 
+              name: data.name, 
+              status: data.status, 
+              guests: data.guests,
+              attended: data.attended || false
+          }])
+          .select()
+          .single();
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { data: resultData, error } = result as { data: any | null; error: any };
 
         if (error) throw error;
+        if (!resultData) throw new Error('No data returned from insert');
 
         return {
-          id: result.id,
-          name: result.name,
-          status: result.status,
-          guests: result.guests,
-          date: result.created_at,
-          attended: result.attended
+          id: resultData.id,
+          name: resultData.name,
+          status: resultData.status,
+          guests: resultData.guests,
+          date: resultData.created_at,
+          attended: resultData.attended
         } as RsvpData;
       } catch (error) {
         console.error('Error adding RSVP:', error);
@@ -194,10 +199,9 @@ export const db = {
     },
     delete: async (id: number) => {
       try {
-        const { error } = await withTimeout(
-          supabase.from('rsvp').delete().eq('id', id),
-          10000
-        );
+        const queryPromise = supabase.from('rsvp').delete().eq('id', id);
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { error } = result as { error: any };
         if (error) throw error;
       } catch (error) {
         console.error('Error deleting RSVP:', error);
@@ -207,10 +211,9 @@ export const db = {
     update: async (id: number, data: Partial<RsvpData>) => {
       try {
         const { id: _, date, ...updateData } = data as any;
-        const { error } = await withTimeout(
-          supabase.from('rsvp').update(updateData).eq('id', id),
-          10000
-        );
+        const queryPromise = supabase.from('rsvp').update(updateData).eq('id', id);
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { error } = result as { error: any };
         if (error) throw error;
       } catch (error) {
         console.error('Error updating RSVP:', error);
@@ -221,18 +224,21 @@ export const db = {
   invitations: {
     getAll: async () => {
       try {
-        const { data, error } = await withTimeout(
-          supabase
-            .from('invitations')
-            .select('*')
-            .order('created_at', { ascending: false }),
-          10000
-        );
+        const queryPromise = supabase
+          .from('invitations')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+
+        const { data, error } = result as { data: any[] | null; error: any };
 
         if (error) {
           console.error('Error fetching invitations:', error);
           return [];
         }
+
+        if (!data) return [];
 
         return data.map((item: any) => ({
           id: item.id,
@@ -247,25 +253,26 @@ export const db = {
     },
     add: async (data: Omit<Invitation, 'id' | 'createdAt'>) => {
       try {
-        const { data: result, error } = await withTimeout(
-          supabase
-            .from('invitations')
-            .insert([{ 
-                guest_name: data.guestName, 
-                slug: data.slug 
-            }])
-            .select()
-            .single(),
-          10000
-        );
+        const queryPromise = supabase
+          .from('invitations')
+          .insert([{ 
+              guest_name: data.guestName, 
+              slug: data.slug 
+          }])
+          .select()
+          .single();
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { data: resultData, error } = result as { data: any | null; error: any };
 
         if (error) throw error;
+        if (!resultData) throw new Error('No data returned from insert');
 
         return {
-          id: result.id,
-          slug: result.slug,
-          guestName: result.guest_name,
-          createdAt: result.created_at
+          id: resultData.id,
+          slug: resultData.slug,
+          guestName: resultData.guest_name,
+          createdAt: resultData.created_at
         } as Invitation;
       } catch (error) {
         console.error('Error adding invitation:', error);
@@ -274,10 +281,9 @@ export const db = {
     },
     delete: async (id: number) => {
       try {
-        const { error } = await withTimeout(
-          supabase.from('invitations').delete().eq('id', id),
-          10000
-        );
+        const queryPromise = supabase.from('invitations').delete().eq('id', id);
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { error } = result as { error: any };
         if (error) throw error;
       } catch (error) {
         console.error('Error deleting invitation:', error);
@@ -294,10 +300,9 @@ export const db = {
             updateData.guest_name = guestName;
         }
         
-        const { error } = await withTimeout(
-          supabase.from('invitations').update(updateData).eq('id', id),
-          10000
-        );
+        const queryPromise = supabase.from('invitations').update(updateData).eq('id', id);
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { error } = result as { error: any };
         if (error) throw error;
       } catch (error) {
         console.error('Error updating invitation:', error);
@@ -306,14 +311,14 @@ export const db = {
     },
     getBySlug: async (slug: string) => {
       try {
-        const { data, error } = await withTimeout(
-          supabase
-            .from('invitations')
-            .select('*')
-            .eq('slug', slug)
-            .single(),
-          10000
-        );
+        const queryPromise = supabase
+          .from('invitations')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+        
+        const result = await withTimeout(queryPromise as unknown as Promise<any>, 10000);
+        const { data, error } = result as { data: any | null; error: any };
         
         if (error || !data) {
           return null;
