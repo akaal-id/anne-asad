@@ -35,6 +35,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
 
   // Feedback
   const [copiedLink, setCopiedLink] = useState<string | null>(null);
+  const [copiedTextId, setCopiedTextId] = useState<number | null>(null);
 
   const refreshData = async () => {
     try {
@@ -150,6 +151,45 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
       setTimeout(() => setCopiedLink(null), 2000);
   };
 
+  const generateCustomText = (guestName: string, urlSlug: string) => {
+    // Use the same logic as linkUrl generation in the table
+    const linkUrl = origin ? `${origin}/?u=${urlSlug}` : `https://wedding.akaal.id${BASE_PATH}/?u=${urlSlug}`;
+    
+    const template = `لسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ
+
+${guestName},
+
+Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud mengundang ${guestName} untuk menghadiri acara pernikahan kami:
+
+Aulianne Farah Anissa (Anne) & Asad Muhammad (Asad)
+
+Insya Allah acara akan diselenggarakan pada:
+Tanggal : Sabtu, 7 Februari 2026
+Lokasi : Terlampir pada undangan digital
+
+Berikut adalah tautan undangan digital kami untuk informasi lengkap dan konfirmasi kehadiran (RSVP):
+
+🔗 Link Undangan:
+${linkUrl}
+
+Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila ${guestName} berkenan hadir dan memberikan doa restu kepada kami.
+
+Atas perhatian dan kehadirannya, kami ucapkan terima kasih.
+
+وَالسَّلاَمُ عَلَيْكُمْ وَرَحْمَةُ اللهِ وَبَرَكَاتُهُ
+
+Hormat kami, Anne & Asad`;
+
+    return template;
+  };
+
+  const copyCustomText = (inv: Invitation) => {
+    const customText = generateCustomText(inv.guestName, inv.slug || inv.guestName);
+    navigator.clipboard.writeText(customText);
+    setCopiedTextId(inv.id);
+    setTimeout(() => setCopiedTextId(null), 2000);
+  };
+
   const handleLogout = async () => {
     try {
       const res = await fetch(`${BASE_PATH}/api/auth/logout`, {
@@ -261,6 +301,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                     <th className="px-4 py-3 font-semibold">Nama Tamu</th>
                     <th className="px-4 py-3 font-semibold">URL Slug</th>
                     <th className="px-4 py-3 font-semibold">Link</th>
+                    <th className="px-4 py-3 font-semibold">Copy Teks Undangan</th>
                     <th className="px-4 py-3 font-semibold text-right">Actions</th>
                   </tr>
                 </thead>
@@ -299,6 +340,25 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                                     </button>
                                 </div>
                             </td>
+                            <td className="px-4 py-3">
+                                <button 
+                                    onClick={() => copyCustomText(inv)} 
+                                    className="flex items-center gap-2 text-sm text-navy-primary hover:text-navy-deep transition-colors"
+                                    title="Copy teks undangan custom"
+                                >
+                                    {copiedTextId === inv.id ? (
+                                        <>
+                                            <Check className="h-4 w-4 text-green-600" />
+                                            <span className="text-green-600">Copied!</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Copy className="h-4 w-4" />
+                                            <span>Copy Teks</span>
+                                        </>
+                                    )}
+                                </button>
+                            </td>
                             <td className="px-4 py-3 text-right space-x-2">
                                 {isEditing ? (
                                     <>
@@ -315,7 +375,7 @@ export function AdminDashboardClient({ initialWishes, initialRsvps, initialInvit
                         </tr>
                       );
                   })}
-                  {invitations.length === 0 && <tr><td colSpan={4} className="p-4 text-center text-gray-500">Belum ada undangan.</td></tr>}
+                  {invitations.length === 0 && <tr><td colSpan={5} className="p-4 text-center text-gray-500">Belum ada undangan.</td></tr>}
                 </tbody>
               </table>
             </div>
