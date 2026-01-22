@@ -19,9 +19,13 @@ export async function POST(request: Request) {
 
     const newWish = await db.wishes.add({ name, message });
     return NextResponse.json(newWish);
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in POST /api/wishes:', error);
-    return NextResponse.json({ error: 'Internal Server Error', details: String(error) }, { status: 500 });
+    const errorMessage = error?.message || String(error);
+    if (errorMessage.includes('timed out')) {
+      return NextResponse.json({ error: 'Request timed out. Please try again.' }, { status: 504 });
+    }
+    return NextResponse.json({ error: 'Internal Server Error', details: errorMessage }, { status: 500 });
   }
 }
 
